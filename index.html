@@ -143,6 +143,25 @@ body { display: flex; flex-direction: column; }
 .mode-bar-key { color: var(--pink); margin-right: 6px; }
 
 /* ==========================================================================
+   MENU MODE (entry / result screen)
+   The stat readout belongs to the running game, not to the menu. On the entry
+   screen only the language + sound cluster is shown, and the overlay starts
+   below it so the title is never hidden behind a bar.
+   ========================================================================== */
+body.menu #hud {
+  background: transparent;
+  border-bottom: none;
+  padding: 8px 12px 0;
+  justify-content: flex-end;
+  /* The bar is full width but invisible here; without this it would swallow
+     clicks on the START GAME button underneath it. */
+  pointer-events: none;
+}
+body.menu #hud .hud-item { display: none; }
+body.menu #hud .topbar { pointer-events: auto; }
+body.menu #modeBar { display: none; }
+
+/* ==========================================================================
    STAGE + CANVAS
    ========================================================================== */
 #stage {
@@ -201,7 +220,10 @@ body { display: flex; flex-direction: column; }
    FULL SCREEN OVERLAYS (start / end)
    ========================================================================== */
 .screen {
-  position: fixed; inset: 0; z-index: 50;
+  /* The overlay starts below the chrome bar (--chrome-h, measured in JS) so
+     the entry screen's title is never hidden behind the top bar. */
+  position: fixed; left: 0; right: 0; bottom: 0; top: var(--chrome-h, 0px);
+  z-index: 50;
   display: flex; flex-direction: column;
   align-items: center;
   /* `safe center` keeps the top of a tall content column reachable when the
@@ -1459,9 +1481,10 @@ class Game {
       (x, y) => this.onChargeRelease(x, y)
     );
 
-    window.addEventListener('resize', () => this.setupCanvas());
-    window.addEventListener('orientationchange', () => setTimeout(() => this.setupCanvas(), 120));
+    window.addEventListener('resize', () => { this.setupCanvas(); this.updateChromeHeight(); });
+    window.addEventListener('orientationchange', () => setTimeout(() => { this.setupCanvas(); this.updateChromeHeight(); }, 120));
 
+    this.setChromeMode();
     this.updateUI();
     this.loop();
   }
@@ -1521,9 +1544,36 @@ class Game {
     document.getElementById('endScreen').classList.add('hidden');
     this.fxLayer.innerHTML = '';
 
+    this.setChromeMode();
     this.updateUI();
     this.sound.ensure();
     this.sound.start();
+  }
+
+  // --------------------------------------------------------------------------
+  // Chrome mode
+  // The stat readout (SCORE / WALLET / TIME ...) belongs to the running game.
+  // On the entry and result screens it is pure noise and it used to sit on top
+  // of the title, so the whole bar collapses to the language + sound cluster
+  // and the overlay starts right below it.
+  // --------------------------------------------------------------------------
+  setChromeMode() {
+    const inMenu = this.state !== GameState.PLAYING;
+    document.body.classList.toggle('menu', inMenu);
+    this.updateChromeHeight();
+  }
+
+  updateChromeHeight() {
+    const hud = document.getElementById('hud');
+    const modeBar = document.getElementById('modeBar');
+    if (!hud) return;
+    let bottom = hud.getBoundingClientRect().bottom;
+    // While playing, the objective strip sits under the HUD; the overlay is
+    // hidden then, but keeping the value honest avoids a jump if it reopens.
+    if (!document.body.classList.contains('menu') && modeBar) {
+      bottom = Math.max(bottom, modeBar.getBoundingClientRect().bottom);
+    }
+    document.documentElement.style.setProperty('--chrome-h', Math.round(bottom) + 'px');
   }
 
   goStart() {
@@ -1536,6 +1586,7 @@ class Game {
     this.inputHandler.reset();
     document.getElementById('endScreen').classList.add('hidden');
     document.getElementById('startScreen').classList.remove('hidden');
+    this.setChromeMode();
     this.updateUI();
     this.render();
   }
@@ -1614,6 +1665,7 @@ class Game {
 
     this.updateUI();
     document.getElementById('endScreen').classList.remove('hidden');
+    this.setChromeMode();
     if (bankrupt) this.sound.gameOver(); else this.sound.win();
     this.render();
   }

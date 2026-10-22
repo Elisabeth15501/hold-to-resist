@@ -376,6 +376,32 @@ still, 100% when tracking the item) but was **not surfaced anywhere in the
 game**. The start screen instruction line and the README now state it
 explicitly: *hold to charge, drag onto the item, release to fire*.
 
+### Bug Fix Log (2026-10-22, round 4)
+
+The top bar was covering the entry-screen title on both mobile and desktop,
+and it carried the stat readout (SCORE / WALLET / TIME) that only makes sense
+once a round is running.
+
+| # | Bug | Effect | Fix |
+|---|-----|--------|-----|
+| 19 | `#hud` has `z-index: 55` while `.screen` (the start/end overlay) is `z-index: 50` | The HUD painted **on top of** the entry screen. On a short viewport `justify-content: safe center` pushed the content to the top, so the `h1` "HOLD TO RESIST" ended up completely behind the stat row and was invisible | The overlay is now a separate chrome layer: `body.menu` hides every stat tile, and `.screen` starts at `top: var(--chrome-h)` instead of `inset: 0` |
+| 20 | The stat readout (SCORE / WALLET / TIME + the needs/wants/goal tiles) and the objective strip were on screen on the entry screen | The entry screen contradicted itself (HUD showed EASY's $100/30s while HARD was selected) and the most important content - the title - was squeezed off-screen | A `body.menu` state class now collapses `#hud` to the language + sound cluster and hides `#modeBar`. The class is toggled by `setChromeMode()` on `start()`, `goStart()`, `endGame()` and at boot |
+| 21 | The result screen also showed the in-game HUD | The end screen has its own SCORE / SAVED / SPENT / REMAINING grid, so the bar above it was pure duplication | `setChromeMode()` treats every non-PLAYING state as menu chrome |
+| 22 | The overlay had no way to know how much room the chrome took | The entry screen needed a hard-coded offset that broke on other viewport sizes | `updateChromeHeight()` measures the live bottom of the chrome and publishes it as the `--chrome-h` custom property; it re-runs on resize and orientation change |
+
+### Verification (round 4)
+
+- `tools/chrome-check.js` - **19/19** new assertions covering the chrome
+  layout: the entry screen shows only the language/sound cluster, the title
+  clears the top bar on both a 1440x900 desktop and a 390x844 mobile viewport,
+  the stat tiles and the objective strip come back when the round starts, and
+  the result screen falls back to menu chrome
+- `tools/rules-check.js` - **43/43** (the "mode bar is laid out" assertion
+  moved to the in-game section, and a new one asserts the strip is hidden on
+  the entry screen)
+- `tools/e2e.js` - **56/56**
+- `tools/soak.js`, `tools/limits.js`, `tools/mechanics.js` - passing
+
 ### Verification (round 3)
 
 - `tools/e2e.js` - **56/56** assertions passing

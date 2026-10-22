@@ -47,6 +47,8 @@ the end screen states *which* of the two happened.
 - First visit follows the browser language, so a Chinese-language browser lands
   on Chinese rules without touching the switcher
 - Per-difficulty high scores with saved-money / efficiency / goal-rate records
+- The entry screen shows only the language/sound switcher; the stat readout
+  (SCORE / WALLET / TIME) and the objective strip appear when the round starts
 - 8-bit chiptune sound effects built on the Web Audio API (no audio assets)
 - CRT scanline overlay, neon glow, pixel-art rendering
 - Responsive: fixed 480×640 logical resolution, scaled to fit any screen with
@@ -67,6 +69,7 @@ hold-to-resist/
 ├── tools/                      # Playwright test harness (dev only)
 │   ├── e2e.js                  # 56-assertion end-to-end suite
 │   ├── rules-check.js          # difficulty-rules / end-condition assertions
+│   ├── chrome-check.js         # menu chrome / HUD visibility assertions
 │   ├── soak.js                 # full-round playthroughs
 │   ├── limits.js               # category spending-limit checks
 │   └── mechanics.js            # bargain/urgency/scoring/sound checks
@@ -96,6 +99,12 @@ actual numbers (the $80/$120 and $100/$150 caps, the +15%/-10% adjustments,
 the $150 goal, the 5s bargain expiry and the 2s time penalty), that all three
 languages render the same rules, and that the end screen states why the round
 ended.
+
+`chrome-check.js` covers the screen chrome: the entry screen shows **only** the
+language + sound switcher, the stat tiles (SCORE / WALLET / TIME) and the
+objective strip appear once the round starts, the title is never hidden behind
+the top bar on a desktop or a mobile viewport, and the result screen falls
+back to the menu chrome.
 
 ## Spec reconciliation
 
