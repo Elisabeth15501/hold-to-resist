@@ -44,6 +44,8 @@ the end screen states *which* of the two happened.
 ## Features
 
 - 3 languages (English, 简体中文, 繁體中文) with `localStorage` persistence
+- First visit follows the browser language, so a Chinese-language browser lands
+  on Chinese rules without touching the switcher
 - Per-difficulty high scores with saved-money / efficiency / goal-rate records
 - 8-bit chiptune sound effects built on the Web Audio API (no audio assets)
 - CRT scanline overlay, neon glow, pixel-art rendering

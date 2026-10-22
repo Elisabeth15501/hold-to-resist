@@ -788,7 +788,16 @@ class I18nManager {
     this.currentLang = 'en';
     try {
       const saved = localStorage.getItem('lang');
-      if (saved && this.translations[saved]) this.currentLang = saved;
+      if (saved && this.translations[saved]) {
+        this.currentLang = saved;
+      } else {
+        // No explicit choice yet: follow the browser's language so a
+        // Chinese-language judge lands on Chinese rules on the first visit.
+        const browser = (navigator.language || 'en').toLowerCase();
+        if (browser.indexOf('zh') === 0 || browser.indexOf('zh-') === 0) {
+          this.currentLang = /tw|hk|mo|hant/.test(browser) ? 'zh-TW' : 'zh-CN';
+        }
+      }
     } catch (e) { /* storage unavailable, fall back to English */ }
   }
 

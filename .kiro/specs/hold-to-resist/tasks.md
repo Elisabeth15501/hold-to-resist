@@ -369,6 +369,7 @@ public GitHub Pages link, so the first impression had to carry the rules.
 | 15 | The HUD kept showing the EASY numbers ($100 / 30s) on the start screen even with HARD selected | The HUD contradicted the rules card directly below it | `updateHUDSummary()` mirrors the selected difficulty's numbers while in the START state |
 | 16 | The budget-goal bar used the shared `.full` class, which is **red** | In HARD the goal is met at spawn ($200 wallet vs a $150 goal), so the bar started full-and-red - it read as a warning when it actually meant success | `setBar()` takes a `fullIsGood` flag; the goal bar uses a green `.goalMet` style |
 | 17 | `goalReached` existed in all three dictionaries but was **never fired** | The player was never told when the HARD budget goal was met or broken | The goal in HARD is met on frame one, so the meaningful beat is the balance *falling below* $150 - a new `goalBroken` event now announces that |
+| 18 | The language always started at English regardless of the browser's locale | A Chinese-language judge landed on English rules on the first visit and had to find the 简/繁 switcher | With no stored preference the game now follows `navigator.language` (`zh-Hant`/`zh-TW`/`zh-HK` -> `zh-TW`, other `zh-*` -> `zh-CN`). An explicit switch still wins and is persisted |
 
 The drag-to-aim technique was measured in round 2 (13% hit rate when holding
 still, 100% when tracking the item) but was **not surfaced anywhere in the
@@ -378,12 +379,13 @@ explicitly: *hold to charge, drag onto the item, release to fire*.
 ### Verification (round 3)
 
 - `tools/e2e.js` - **56/56** assertions passing
-- `tools/rules-check.js` - **39/39** new assertions covering the rules layer:
+- `tools/rules-check.js` - **42/42** new assertions covering the rules layer:
   every difficulty states both end conditions, MEDIUM/HARD name their real
   numbers (the $80/$120 and $100/$150 caps, the +15%/-10% adjustments, the
   $150 goal, the 5s bargain expiry, the 2s time penalty), all three languages
-  render the same rules, the goal bar uses the success style, and the end
-  screen states why the round ended
+  render the same rules, the goal bar uses the success style, the end screen
+  states why the round ended, and a zh-CN / zh-TW / en-US browser each starts
+  in the right language
 - `tools/soak.js` - full EASY/MEDIUM/HARD rounds, zero console errors
 - `tools/limits.js`, `tools/mechanics.js` - passing
 
