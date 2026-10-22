@@ -2,3 +2,8 @@
 # line endings so a Windows checkout cannot rewrite the deployed file as
 # CRLF/UTF-16 and break the byte-for-byte single-file delivery.
 index.html text eol=lf working-tree-encoding=UTF-8
+
+# Docs and the test harness are plain text; keep them LF so the diffs stay
+# stable no matter who checks the repo out.
+*.md text eol=lf
+tools/*.js text eol=lf
