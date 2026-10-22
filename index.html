@@ -74,12 +74,12 @@ body { display: flex; flex-direction: column; }
    ========================================================================== */
 .topbar {
   margin-left: auto;
-  display: flex; gap: 6px; align-items: center;
+  display: flex; gap: 8px; align-items: center;
 }
-.lang-select { display: flex; gap: 5px; }
+.lang-select { display: flex; gap: 6px; }
 .lang-btn, .icon-btn {
   background: var(--bg); border: 2px solid var(--cyan); color: var(--cyan);
-  padding: 5px 8px; font-size: 8px; font-family: var(--font);
+  padding: 8px 12px; font-size: 10px; font-family: var(--font);
   cursor: pointer; line-height: 1.2;
 }
 .lang-btn.active { background: var(--cyan); color: var(--bg); }
@@ -90,33 +90,57 @@ body { display: flex; flex-direction: column; }
 /* ==========================================================================
    HUD
    ========================================================================== */
+/* Press Start 2P is drawn on an 8px grid, so the sizes that stay crisp are
+   the multiples of 8 (8/16/24). Anything in between gets resampled and the
+   glyphs turn mushy - that is why the labels used to look blurry. */
 #hud {
   position: relative; z-index: 55;
-  display: flex; flex-wrap: wrap; gap: 6px;
+  display: flex; flex-wrap: wrap; gap: 10px;
   align-items: center;
-  padding: 8px 10px;
+  padding: 10px 14px;
+  width: 100%; max-width: 1180px; margin: 0 auto;
   background: linear-gradient(180deg, #17173a 0%, #0f0f1a 100%);
   border-bottom: 2px solid #2a2a55;
 }
 .hud-item {
-  display: flex; flex-direction: column; gap: 4px;
-  padding: 6px 9px; min-width: 74px;
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 8px 12px; min-width: 104px;
   background: var(--panel);
   border: 2px solid #2e2e5c;
 }
-.hud-item.wide { flex: 1 1 120px; min-width: 120px; }
-.hud-label { color: var(--gray); font-size: 6px; letter-spacing: 0.5px; }
-.hud-value { color: var(--cyan); font-size: 11px; }
+.hud-item.wide { flex: 1 1 160px; min-width: 160px; }
+.hud-label { color: var(--gray); font-size: 8px; letter-spacing: 0.5px; }
+.hud-value { color: var(--cyan); font-size: 16px; }
 .hud-value.warn { color: var(--red); animation: pulse 0.5s infinite; }
 .hud-value.good { color: var(--green); }
 .hud-value.gold { color: var(--yellow); }
-.bar { height: 7px; background: #26264a; border: 1px solid #3a3a6a; }
+.bar { height: 8px; background: #26264a; border: 1px solid #3a3a6a; }
 .bar-fill { height: 100%; width: 0%; background: var(--cyan); transition: width 0.15s linear; }
 .bar-fill.needs { background: var(--green); }
 .bar-fill.wants { background: var(--pink); }
 .bar-fill.goal { background: var(--yellow); }
 .bar-fill.full { background: var(--red); }
+/* The budget goal filled means success, so it must not use the red warning. */
+.bar-fill.goalMet { background: var(--green); box-shadow: 0 0 8px rgba(0, 255, 102, 0.7); }
 @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+/* Objective strip under the HUD. It tells the player what the current mode
+   asks for and, crucially, how the round can end. */
+#modeBar {
+  /* Below the start/end overlays (z 50) so it does not float over the
+     start screen, but above the stage so it stays visible while playing. */
+  position: relative; z-index: 45;
+  display: flex; flex-wrap: wrap; gap: 8px 20px;
+  align-items: center;
+  padding: 8px 14px;
+  width: 100%; max-width: 1180px; margin: 0 auto;
+  background: #10101f;
+  border-bottom: 2px solid #2a2a55;
+  font-size: 8px; line-height: 1.8;
+  color: var(--gray);
+}
+.mode-bar-part { white-space: nowrap; }
+.mode-bar-key { color: var(--pink); margin-right: 6px; }
 
 /* ==========================================================================
    STAGE + CANVAS
@@ -179,7 +203,10 @@ body { display: flex; flex-direction: column; }
 .screen {
   position: fixed; inset: 0; z-index: 50;
   display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
+  align-items: center;
+  /* `safe center` keeps the top of a tall content column reachable when the
+     overlay has to scroll (small phones), instead of clipping it. */
+  justify-content: safe center;
   gap: 14px;
   padding: 24px 18px;
   text-align: center;
@@ -189,39 +216,66 @@ body { display: flex; flex-direction: column; }
 }
 .screen.hidden { display: none; }
 h1 {
-  color: var(--cyan); font-size: 22px; line-height: 1.5;
-  text-shadow: 0 0 14px var(--cyan), 0 4px 0 #0a6b66;
+  color: var(--cyan); font-size: 24px; line-height: 1.5;
+  /* A hard offset shadow in a dark tone keeps the glyph edges crisp. The
+     wide cyan glow that used to be here bled into the letterforms and made
+     the title look blurry up close. */
+  text-shadow: 0 4px 0 #0a6b66;
 }
-h2 { color: var(--pink); font-size: 13px; line-height: 1.6; text-shadow: 0 0 10px var(--pink); }
-.p { color: var(--yellow); font-size: 9px; line-height: 1.8; }
-.muted { color: var(--gray); font-size: 8px; line-height: 1.9; }
+h2 { color: var(--pink); font-size: 16px; line-height: 1.6; text-shadow: 0 3px 0 #660066; }
+.p { color: var(--yellow); font-size: 12px; line-height: 1.9; }
+.muted { color: var(--gray); font-size: 12px; line-height: 1.9; }
 .btn {
   background: var(--pink); color: #fff;
-  border: none; padding: 15px 34px;
-  font-size: 11px; font-family: var(--font); cursor: pointer;
+  border: none; padding: 16px 36px;
+  font-size: 16px; font-family: var(--font); cursor: pointer;
   animation: blink 1s steps(1, end) infinite;
   box-shadow: 0 0 16px rgba(255, 0, 255, 0.5);
 }
 .btn:hover { background: var(--cyan); color: var(--bg); box-shadow: 0 0 20px rgba(0, 255, 245, 0.7); }
 @keyframes blink { 0%, 60% { opacity: 1; } 61%, 100% { opacity: 0.62; } }
-.diff-select { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.diff-select { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
 .diff-btn {
   background: var(--bg); border: 3px solid var(--gray); color: var(--gray);
-  padding: 12px 18px; font-size: 9px; font-family: var(--font); cursor: pointer;
+  padding: 14px 20px; font-size: 12px; font-family: var(--font); cursor: pointer;
 }
 .diff-btn:hover { border-color: var(--cyan); color: var(--cyan); }
 .diff-btn.selected { background: var(--cyan); color: var(--bg); box-shadow: 0 0 14px rgba(0, 255, 245, 0.55); }
-.diff-desc { max-width: 460px; min-height: 44px; }
-.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 10px; width: 100%; max-width: 560px; }
-.stat { background: var(--panel); border: 2px solid #2e2e5c; padding: 12px 8px; }
-.stat .label { color: var(--gray); font-size: 7px; margin-bottom: 7px; }
-.stat .val { color: var(--cyan); font-size: 13px; }
+.diff-desc { max-width: 640px; min-height: 44px; }
+
+/* Rules panel: the judge reads the difficulty contract here, before pressing
+   START. Every line is one concrete rule, never a marketing sentence. */
+.rules {
+  width: 100%; max-width: 720px;
+  background: var(--panel); border: 2px solid #2e2e5c;
+  padding: 14px 16px; text-align: left;
+}
+.rules-head {
+  color: var(--pink); font-size: 8px; letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.rules-list { list-style: none; margin: 0 0 12px; padding: 0; }
+.rules-list:last-child { margin-bottom: 0; }
+.rules-list li {
+  color: var(--gray); font-size: 12px; line-height: 1.9;
+  padding-left: 16px; position: relative;
+}
+.rules-list li::before { content: '>'; position: absolute; left: 0; color: var(--cyan); }
+.rules-list.end li { color: var(--yellow); }
+.rules-list.end li::before { content: '='; color: var(--red); }
+.end-reason {
+  color: var(--yellow); font-size: 12px; line-height: 1.9; max-width: 640px;
+}
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; width: 100%; max-width: 640px; }
+.stat { background: var(--panel); border: 2px solid #2e2e5c; padding: 14px 10px; }
+.stat .label { color: var(--gray); font-size: 8px; margin-bottom: 8px; }
+.stat .val { color: var(--cyan); font-size: 16px; }
 .stat .val.green { color: var(--green); }
 .stat .val.red { color: var(--red); }
 .stat .val.gold { color: var(--yellow); }
-.new-record { color: var(--yellow); font-size: 9px; text-shadow: 0 0 10px var(--yellow); }
-.adjust { color: var(--pink); font-size: 8px; }
-.hint { color: var(--gray); font-size: 7px; line-height: 2; max-width: 520px; }
+.new-record { color: var(--yellow); font-size: 12px; text-shadow: 0 2px 0 #665500; }
+.adjust { color: var(--pink); font-size: 12px; }
+.hint { color: var(--gray); font-size: 12px; line-height: 2; max-width: 640px; }
 
 @media (prefers-reduced-motion: reduce) {
   .btn { animation: none; }
@@ -231,14 +285,56 @@ h2 { color: var(--pink); font-size: 13px; line-height: 1.6; text-shadow: 0 0 10p
 }
 
 @media (max-width: 600px) {
+  /* Stay on the 8px grid so the pixel font keeps its sharp edges. */
   h1 { font-size: 16px; }
-  .btn { padding: 13px 24px; font-size: 9px; }
-  .diff-btn { padding: 10px 12px; font-size: 8px; }
-  .hud-item { min-width: 64px; padding: 5px 7px; }
-  .hud-value { font-size: 9px; }
-  .hud-label { font-size: 5px; }
-  #hud { padding-right: 10px; }
+  h2 { font-size: 12px; }
+  .btn { padding: 14px 26px; font-size: 12px; }
+  .diff-btn { padding: 12px 14px; font-size: 10px; }
+  .p, .muted, .hint, .adjust { font-size: 10px; }
+  .stat .label { font-size: 8px; }
+  .stat .val { font-size: 12px; }
+  .new-record { font-size: 10px; }
+  .hud-item { min-width: 76px; padding: 6px 8px; }
+  .hud-item.wide { min-width: 132px; }
+  .hud-value { font-size: 12px; }
+  .hud-label { font-size: 8px; }
+  .lang-btn, .icon-btn { padding: 6px 8px; font-size: 8px; }
+  #hud { padding-right: 10px; gap: 6px; }
   .topbar { margin-left: 0; }
+  #modeBar { padding: 6px 10px; font-size: 8px; gap: 4px 12px; }
+  .rules { padding: 10px 12px; }
+  .rules-list li { font-size: 10px; line-height: 1.9; padding-left: 12px; }
+  .rules-head { font-size: 8px; }
+  .end-reason { font-size: 10px; }
+}
+
+/* Desktop: the HUD sits on a wide screen, so give it more presence. */
+@media (min-width: 1000px) {
+  #hud { padding: 12px 18px; gap: 12px; }
+  .hud-item { min-width: 128px; padding: 10px 14px; gap: 8px; }
+  .hud-item.wide { min-width: 200px; }
+  .hud-value { font-size: 24px; }
+  .hud-label { font-size: 8px; }
+  .bar { height: 10px; }
+  .lang-btn, .icon-btn { padding: 10px 14px; font-size: 12px; }
+  .lang-select { gap: 8px; }
+  h1 { font-size: 32px; }
+  h2 { font-size: 16px; }
+  .p { font-size: 16px; }
+  .muted { font-size: 16px; }
+  .hint { font-size: 16px; }
+  .btn { font-size: 24px; padding: 20px 44px; }
+  .diff-btn { font-size: 16px; padding: 16px 24px; }
+  .diff-desc { max-width: 720px; }
+  .stat .label { font-size: 8px; }
+  .stat .val { font-size: 24px; }
+  .new-record { font-size: 16px; }
+  .adjust { font-size: 16px; }
+  #modeBar { padding: 10px 18px; font-size: 12px; gap: 8px 28px; }
+  .rules { max-width: 780px; padding: 18px 22px; }
+  .rules-head { font-size: 8px; }
+  .rules-list li { font-size: 16px; line-height: 2; padding-left: 20px; }
+  .end-reason { font-size: 16px; }
 }
 </style>
 </head>
@@ -282,6 +378,14 @@ h2 { color: var(--pink); font-size: 13px; line-height: 1.6; text-shadow: 0 0 10p
   </div>
 </div>
 
+<!-- Always-visible objective strip: what this mode asks for and how a round
+     can end. The start screen explains it once; this keeps it on screen
+     while the judge is actually playing. -->
+<div id="modeBar">
+  <span class="mode-bar-part"><span class="mode-bar-key" id="goalKey">GOAL</span><span id="modeGoal"></span></span>
+  <span class="mode-bar-part"><span class="mode-bar-key" id="endKey">END</span><span id="modeEnd"></span></span>
+</div>
+
 <div id="stage">
   <canvas id="gameCanvas" width="480" height="640"></canvas>
   <div id="fxLayer"></div>
@@ -292,12 +396,17 @@ h2 { color: var(--pink); font-size: 13px; line-height: 1.6; text-shadow: 0 0 10p
   <h1 id="title">HOLD TO RESIST</h1>
   <h2 id="subtitle">按住别买</h2>
   <p class="p" id="hs">HIGH SCORE: 0</p>
-  <p class="p diff-desc" id="diffDesc"></p>
   <p class="muted" id="diffLabel">SELECT DIFFICULTY</p>
   <div class="diff-select">
     <button class="diff-btn" data-diff="EASY" onclick="game.selectDifficulty(this,'EASY')">EASY</button>
     <button class="diff-btn" data-diff="MEDIUM" onclick="game.selectDifficulty(this,'MEDIUM')">MEDIUM</button>
     <button class="diff-btn" data-diff="HARD" onclick="game.selectDifficulty(this,'HARD')">HARD</button>
+  </div>
+  <div class="rules" id="rulesCard">
+    <p class="rules-head" id="rulesHead">RULES</p>
+    <ul class="rules-list" id="rulesList"></ul>
+    <p class="rules-head" id="rulesEndHead">HOW A ROUND ENDS</p>
+    <ul class="rules-list end" id="rulesEndList"></ul>
   </div>
   <button class="btn" id="startBtn" onclick="game.start()">START GAME</button>
   <p class="hint" id="instr">HOLD TO CHARGE - RELEASE TO FIRE</p>
@@ -305,6 +414,7 @@ h2 { color: var(--pink); font-size: 13px; line-height: 1.6; text-shadow: 0 0 10p
 
 <div id="endScreen" class="screen hidden">
   <h1 id="endTitle">GAME OVER</h1>
+  <p class="end-reason" id="endReasonText"></p>
   <p class="new-record" id="newRecord" hidden>NEW RECORD!</p>
   <div class="stats">
     <div class="stat"><p class="label" id="fsLabel">SCORE</p><p class="val" id="fs">0</p></div>
@@ -443,7 +553,7 @@ class I18nManager {
         medium: 'MEDIUM',
         hard: 'HARD',
         highScore: 'HIGH SCORE',
-        instructions: 'HOLD TO CHARGE - RELEASE TO FIRE',
+        instructions: 'HOLD TO CHARGE - DRAG ONTO THE ITEM - RELEASE TO FIRE',
         gameOver: 'GAME OVER',
         survived: 'YOU RESISTED!',
         score: 'SCORE',
@@ -465,13 +575,54 @@ class I18nManager {
         ready: 'GET READY',
         go: 'GO!',
         goalReached: 'GOAL REACHED!',
+        goalBroken: 'GOAL BROKEN!',
         budgetBonus: 'BUDGET BONUS',
         overspendPenalty: 'OVERSPEND PENALTY',
         timePenalty: 'TIME PENALTY',
         categoryLocked: 'LIMIT REACHED',
+        shoppingCart: 'SHOPPING CART',
+        markNeeds: 'N',
+        markWants: 'W',
+        lockMark: 'X',
         descEasy: 'EASY - $100 wallet, 30 seconds. Simple intercepting, no spending limits.',
         descMedium: 'MEDIUM - $150 wallet, 30 seconds. NEEDS and WANTS categories with per-category spending limits.',
-        descHard: 'HARD - $200 wallet, 45 seconds. Budget goal, bargain items, urgency and time penalties.'
+        descHard: 'HARD - $200 wallet, 45 seconds. Budget goal, bargain items, urgency and time penalties.',
+        rulesHead: 'RULES',
+        rulesEndHead: 'HOW A ROUND ENDS',
+        goalKey: 'GOAL',
+        endKey: 'END',
+        rulesEasy: [
+          'Wallet $100 - 30 seconds.',
+          'Bounce every temptation back up before it reaches the cart.',
+          'Anything that lands in the cart gets bought and drains your wallet.',
+          'No spending caps - pure interception.'
+        ],
+        rulesMedium: [
+          'Wallet $150 - 30 seconds.',
+          'NEEDS cap $80, WANTS cap $120. A locked category stops draining your wallet.',
+          'Spend under $75 for a +15% score bonus.',
+          'Spend more than $64 on NEEDS and you lose 10% of your score.'
+        ],
+        rulesHard: [
+          'Wallet $200 - 45 seconds.',
+          'Budget goal: keep $150 in the wallet. Drop below it and the goal breaks.',
+          'NEEDS cap $100, WANTS cap $150.',
+          'Bargain items pay double points but vanish after 5 seconds.',
+          'Urgent items fall faster - charge up more to reach them.',
+          'Every miss costs 2 seconds off the clock.'
+        ],
+        endRules: [
+          'Wallet reaches $0 - bankrupt, the round ends immediately.',
+          'Timer reaches 0 - the round ends and you survived.'
+        ],
+        goalEasy: 'Bounce it back. Wallet $0 ends the round.',
+        goalMedium: 'Stay under $75 spent for a +15% bonus.',
+        goalHard: 'Protect $150 in the wallet - dropping below breaks the goal.',
+        endEasy: 'Wallet $0 = bankrupt. Timer 0 = survived.',
+        endMedium: 'Wallet $0 = bankrupt. Timer 0 = survived.',
+        endHard: 'Wallet $0 = bankrupt. Timer 0 = survived. Each miss = -2s.',
+        endBankruptReason: 'Wallet reached $0 - bankrupt. The round ends here.',
+        endTimeoutReason: 'Time is up - you resisted the whole way.'
       },
       'zh-CN': {
         title: '按住别买',
@@ -482,7 +633,7 @@ class I18nManager {
         medium: '中等',
         hard: '困难',
         highScore: '最高分',
-        instructions: '按住蓄力 - 松开放射波拦截',
+        instructions: '按住蓄力 - 用指针跟着物品走 - 松开放射波拦截',
         gameOver: '游戏结束',
         survived: '你忍住了！',
         score: '分数',
@@ -504,13 +655,54 @@ class I18nManager {
         ready: '准备',
         go: '开始！',
         goalReached: '目标达成！',
+        goalBroken: '目标告破！',
         budgetBonus: '预算奖励',
         overspendPenalty: '超支惩罚',
         timePenalty: '时间惩罚',
         categoryLocked: '已达上限',
+        shoppingCart: '购物车',
+        markNeeds: '需',
+        markWants: '想',
+        lockMark: '限',
         descEasy: '简单 - 钱包 $100，30 秒。纯拦截玩法，无消费上限。',
         descMedium: '中等 - 钱包 $150，30 秒。必需与想要分类消费，各有上限。',
-        descHard: '困难 - 钱包 $200，45 秒。预算目标、限时抢购、紧迫度与时间惩罚。'
+        descHard: '困难 - 钱包 $200，45 秒。预算目标、限时抢购、紧迫度与时间惩罚。',
+        rulesHead: '玩法规则',
+        rulesEndHead: '回合如何结束',
+        goalKey: '目标',
+        endKey: '结束条件',
+        rulesEasy: [
+          '钱包 $100，30 秒。',
+          '在诱惑物落进购物车前用反弹波把它打回去。',
+          '落进购物车的物品会被买走，直接扣掉钱包余额。',
+          '没有消费上限，纯粹比拼拦截。'
+        ],
+        rulesMedium: [
+          '钱包 $150，30 秒。',
+          '必需上限 $80、想要上限 $120；达到上限后该分类不再扣钱。',
+          '总消费低于 $75，结算分数 +15%。',
+          '必需消费超过 $64，结算分数 -10%。'
+        ],
+        rulesHard: [
+          '钱包 $200，45 秒。',
+          '预算目标：保住 $150。跌破 $150 目标即告破。',
+          '必需上限 $100、想要上限 $150。',
+          '限时抢购商品分数翻倍，但 5 秒后会消失。',
+          '加急商品下落更快，需要蓄更大的力。',
+          '每漏接一个商品，倒计时扣 2 秒。'
+        ],
+        endRules: [
+          '钱包余额降到 $0 —— 破产，回合立刻结束。',
+          '倒计时归零 —— 回合结束，你成功忍住了。'
+        ],
+        goalEasy: '把诱惑物打回去。钱包归零即结束。',
+        goalMedium: '消费低于 $75 可拿 +15% 加成。',
+        goalHard: '保住钱包里的 $150，跌破即目标告破。',
+        endEasy: '钱包 $0 = 破产。倒计时 0 = 忍住。',
+        endMedium: '钱包 $0 = 破产。倒计时 0 = 忍住。',
+        endHard: '钱包 $0 = 破产。倒计时 0 = 忍住。每次漏接 -2 秒。',
+        endBankruptReason: '钱包余额归零 —— 破产，回合在此结束。',
+        endTimeoutReason: '时间到 —— 你一路忍住了。'
       },
       'zh-TW': {
         title: '按住別買',
@@ -521,7 +713,7 @@ class I18nManager {
         medium: '中等',
         hard: '困難',
         highScore: '最高分',
-        instructions: '按住儲力 - 放開發射波攔截',
+        instructions: '按住儲力 - 用指針跟著物品走 - 放開發射波攔截',
         gameOver: '遊戲結束',
         survived: '你忍住了！',
         score: '分數',
@@ -543,13 +735,54 @@ class I18nManager {
         ready: '準備',
         go: '開始！',
         goalReached: '目標達成！',
+        goalBroken: '目標告破！',
         budgetBonus: '預算獎勵',
         overspendPenalty: '超支懲罰',
         timePenalty: '時間懲罰',
         categoryLocked: '已達上限',
+        shoppingCart: '購物車',
+        markNeeds: '需',
+        markWants: '想',
+        lockMark: '限',
         descEasy: '簡單 - 錢包 $100，30 秒。純攔截玩法，無消費上限。',
         descMedium: '中等 - 錢包 $150，30 秒。必需與想要分類消費，各有上限。',
-        descHard: '困難 - 錢包 $200，45 秒。預算目標、限時搶購、緊迫度與時間懲罰。'
+        descHard: '困難 - 錢包 $200，45 秒。預算目標、限時搶購、緊迫度與時間懲罰。',
+        rulesHead: '玩法規則',
+        rulesEndHead: '回合如何結束',
+        goalKey: '目標',
+        endKey: '結束條件',
+        rulesEasy: [
+          '錢包 $100，30 秒。',
+          '在誘惑物落進購物車前用反彈波把它打回去。',
+          '落進購物車的物品會被買走，直接扣掉錢包餘額。',
+          '沒有消費上限，純粹比拚攔截。'
+        ],
+        rulesMedium: [
+          '錢包 $150，30 秒。',
+          '必需上限 $80、想要上限 $120；達到上限後該分類不再扣錢。',
+          '總消費低於 $75，結算分數 +15%。',
+          '必需消費超過 $64，結算分數 -10%。'
+        ],
+        rulesHard: [
+          '錢包 $200，45 秒。',
+          '預算目標：保住 $150。跌破 $150 目標即告破。',
+          '必需上限 $100、想要上限 $150。',
+          '限時搶購商品分數翻倍，但 5 秒後會消失。',
+          '加急商品下落更快，需要蓄更大的力。',
+          '每漏接一個商品，倒計時扣 2 秒。'
+        ],
+        endRules: [
+          '錢包餘額降到 $0 —— 破產，回合立刻結束。',
+          '倒計時歸零 —— 回合結束，你成功忍住了。'
+        ],
+        goalEasy: '把誘惑物打回去。錢包歸零即結束。',
+        goalMedium: '消費低於 $75 可拿 +15% 加成。',
+        goalHard: '保住錢包裡的 $150，跌破即目標告破。',
+        endEasy: '錢包 $0 = 破產。倒計時 0 = 忍住。',
+        endMedium: '錢包 $0 = 破產。倒計時 0 = 忍住。',
+        endHard: '錢包 $0 = 破產。倒計時 0 = 忍住。每次漏接 -2 秒。',
+        endBankruptReason: '錢包餘額歸零 —— 破產，回合在此結束。',
+        endTimeoutReason: '時間到 —— 你一路忍住了。'
       }
     };
     this.currentLang = 'en';
@@ -572,6 +805,16 @@ class I18nManager {
   t(key) {
     const table = this.translations[this.currentLang] || this.translations.en;
     return table[key] !== undefined ? table[key] : (this.translations.en[key] !== undefined ? this.translations.en[key] : key);
+  }
+
+  /**
+   * Fetch a list-valued translation (the rule lists). Falls back to English
+   * the same way t() does, and always returns an array.
+   */
+  tList(key) {
+    const table = this.translations[this.currentLang] || this.translations.en;
+    const value = table[key] !== undefined ? table[key] : this.translations.en[key];
+    return Array.isArray(value) ? value : [];
   }
 }
 
@@ -1194,6 +1437,7 @@ class Game {
     this.countdown = 0;
     this.countdownValue = 0;
     this.endReason = null;
+    this.goalBrokenNotified = false;
     this.lastFrameTime = performance.now();
     this.frameHandle = null;
     this.running = false;
@@ -1261,6 +1505,7 @@ class Game {
     this.countdown = 3;
     this.countdownValue = 3;
     this.endReason = null;
+    this.goalBrokenNotified = false;
     this.lastFrameTime = performance.now();
 
     document.getElementById('startScreen').classList.add('hidden');
@@ -1578,7 +1823,7 @@ class Game {
     ctx.font = '8px "Press Start 2P", monospace';
     ctx.textAlign = 'left';
     ctx.fillStyle = 'rgba(255, 0, 255, 0.8)';
-    ctx.fillText('SHOPPING CART', 8, top + 14);
+    ctx.fillText(this.i18n.t('shoppingCart'), 8, top + 14);
   }
 
   renderItems(ctx) {
@@ -1605,14 +1850,15 @@ class Game {
 
       // Category marker.
       if (item.category) {
-        ctx.font = '7px "Press Start 2P", monospace';
+        ctx.font = '8px "Press Start 2P", monospace';
         ctx.fillStyle = item.category === ItemCategory.NEEDS ? '#00ff66' : '#ff66ff';
-        ctx.fillText(item.category === ItemCategory.NEEDS ? 'N' : 'W', item.x, item.y + item.radius + 8);
+        ctx.fillText(this.i18n.t(item.category === ItemCategory.NEEDS ? 'markNeeds' : 'markWants'),
+          item.x, item.y + item.radius + 8);
       }
       if (locked) {
         ctx.font = '12px "Press Start 2P", monospace';
         ctx.fillStyle = '#ff3333';
-        ctx.fillText('X', item.x, item.y);
+        ctx.fillText(this.i18n.t('lockMark'), item.x, item.y);
       }
     }
   }
@@ -1659,12 +1905,41 @@ class Game {
   // --------------------------------------------------------------------------
   // HUD
   // --------------------------------------------------------------------------
+  /**
+   * Preview the selected difficulty in the HUD while the player is still on
+   * the start screen. Without this the HUD keeps showing the EASY numbers
+   * even when HARD is highlighted, which contradicts the rules card right
+   * below it.
+   */
+  updateHUDSummary() {
+    const config = DIFFICULTY[this.currentDifficulty] || DIFFICULTY.EASY;
+    this.setText('hudScore', '0');
+    this.setText('hudWallet', '$' + config.wallet);
+    this.setText('hudTime', String(config.duration));
+    this.setClass('hudWallet', 'hud-value');
+    this.setClass('hudTime', 'hud-value');
+
+    this.show('hudNeedsItem', !!config.categories);
+    this.show('hudWantsItem', !!config.categories);
+    if (config.categories) {
+      this.setText('hudNeeds', '$0 / $' + config.needsLimit);
+      this.setText('hudWants', '$0 / $' + config.wantsLimit);
+      this.setBar('hudNeedsBar', 0, 'needs');
+      this.setBar('hudWantsBar', 0, 'wants');
+    }
+
+    this.show('hudGoalItem', config.budgetGoal > 0);
+    if (config.budgetGoal > 0) {
+      this.setText('hudGoal', '$' + config.wallet + ' / $' + config.budgetGoal);
+      this.setBar('hudGoalBar', 100, 'goal', true);
+    }
+  }
+
   updateHUD() {
     if (this.state !== GameState.PLAYING) return;
     const config = this.difficultyManager.getConfig();
     const balance = this.wallet.getBalance();
     const timeLeft = this.timer.getTimeLeft();
-
     this.setText('hudScore', String(this.scorer.getScore()));
     this.setText('hudWallet', '$' + balance);
     this.setText('hudTime', String(timeLeft));
@@ -1687,7 +1962,19 @@ class Game {
       // Progress is the balance still intact against the savings goal.
       const pct = Math.min(100, (balance / config.budgetGoal) * 100);
       this.setText('hudGoal', '$' + balance + ' / $' + config.budgetGoal);
-      this.setBar('hudGoalBar', pct, 'goal');
+      this.setBar('hudGoalBar', pct, 'goal', true);
+      // HARD starts at $200 against a $150 goal, so the goal is already met
+      // on frame one. The dramatic beat is the balance *falling below* the
+      // goal - that is when the round is effectively lost, and the player
+      // must be told. Announcing "goal reached" at spawn would be nonsense.
+      const broken = balance < config.budgetGoal;
+      if (broken && !this.goalBrokenNotified) {
+        this.goalBrokenNotified = true;
+        this.showFloating(this.canvasPoint(LOGICAL_WIDTH / 2, 120),
+          this.i18n.t('goalBroken'), 'penalty');
+      } else if (!broken) {
+        this.goalBrokenNotified = false;
+      }
     } else {
       this.show('hudGoalItem', false);
     }
@@ -1709,6 +1996,18 @@ class Game {
     if (el) el.textContent = value;
   }
 
+  /** Replace the contents of a <ul> with the given list of strings. */
+  fillList(id, items) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = '';
+    for (const item of items) {
+      const li = document.createElement('li');
+      li.textContent = item;
+      el.appendChild(li);
+    }
+  }
+
   setClass(id, className) {
     if (this.lastHudValues[id + '_cls'] === className) return;
     this.lastHudValues[id + '_cls'] = className;
@@ -1716,15 +2015,19 @@ class Game {
     if (el) el.className = className;
   }
 
-  setBar(id, percent, cssClass) {
+  setBar(id, percent, cssClass, fullIsGood) {
     const key = id + '_bar';
-    const value = cssClass + ':' + Math.round(percent);
+    const value = cssClass + ':' + Math.round(percent) + ':' + (fullIsGood ? 'g' : 'b');
     if (this.lastHudValues[key] === value) return;
     this.lastHudValues[key] = value;
     const el = document.getElementById(id);
     if (!el) return;
     el.style.width = percent + '%';
-    el.className = 'bar-fill ' + cssClass + (percent >= 100 ? ' full' : '');
+    // For a spending cap, a full bar means "over the limit" and must read as
+    // a warning. For the budget goal, a full bar means the goal is met, so
+    // it has to read as a success instead.
+    const fullClass = fullIsGood ? ' goalMet' : ' full';
+    el.className = 'bar-fill ' + cssClass + (percent >= 100 ? fullClass : '');
   }
 
   show(id, visible) {
@@ -1819,6 +2122,18 @@ class Game {
     document.getElementById('endTitle').textContent = this.endReason === 'survived'
       ? t('survived')
       : t('gameOver');
+    // Tell the player *why* the round ended - "GAME OVER" on its own does not
+    // say whether the wallet ran dry or the clock ran out.
+    const endReasonEl = document.getElementById('endReasonText');
+    if (endReasonEl) {
+      if (this.endReason === 'bankrupt') {
+        endReasonEl.textContent = t('endBankruptReason');
+      } else if (this.endReason === 'survived') {
+        endReasonEl.textContent = t('endTimeoutReason');
+      } else {
+        endReasonEl.textContent = '';
+      }
+    }
     document.getElementById('fsLabel').textContent = t('score');
     document.getElementById('svLabel').textContent = t('saved');
     document.getElementById('spLabel').textContent = t('spent');
@@ -1827,6 +2142,15 @@ class Game {
     document.getElementById('nsLabel').textContent = t('needsSpent');
     document.getElementById('wsLabel').textContent = t('wantsSpent');
     document.getElementById('gsLabel').textContent = t('budgetGoal');
+
+    // The HUD labels are separate elements from the end-screen stats, so they
+    // need their own binding or they stay in English after a language switch.
+    document.getElementById('hudScoreLabel').textContent = t('score');
+    document.getElementById('hudWalletLabel').textContent = t('wallet');
+    document.getElementById('hudTimeLabel').textContent = t('time');
+    document.getElementById('hudNeedsLabel').textContent = t('needs');
+    document.getElementById('hudWantsLabel').textContent = t('wants');
+    document.getElementById('hudGoalLabel').textContent = t('budgetGoal');
     document.getElementById('reBtn').textContent = t('playAgain');
     document.getElementById('newRecord').textContent = t('newRecord');
 
@@ -1838,9 +2162,29 @@ class Game {
       b.classList.toggle('selected', b.dataset.diff === this.currentDifficulty);
     });
 
-    const descKey = this.currentDifficulty === 'EASY' ? 'descEasy'
-      : this.currentDifficulty === 'MEDIUM' ? 'descMedium' : 'descHard';
-    document.getElementById('diffDesc').textContent = t(descKey);
+    // The rules card and the objective strip are what make MEDIUM and HARD
+    // legible: they state the goal and, crucially, the two ways a round can
+    // end (bankrupt wallet / timer runs out).
+    const rulesKey = this.currentDifficulty === 'EASY' ? 'rulesEasy'
+      : this.currentDifficulty === 'MEDIUM' ? 'rulesMedium' : 'rulesHard';
+    const goalKey = this.currentDifficulty === 'EASY' ? 'goalEasy'
+      : this.currentDifficulty === 'MEDIUM' ? 'goalMedium' : 'goalHard';
+    const endKey = this.currentDifficulty === 'EASY' ? 'endEasy'
+      : this.currentDifficulty === 'MEDIUM' ? 'endMedium' : 'endHard';
+
+    document.getElementById('rulesHead').textContent = t('rulesHead');
+    document.getElementById('rulesEndHead').textContent = t('rulesEndHead');
+    this.fillList('rulesList', this.i18n.tList(rulesKey));
+    this.fillList('rulesEndList', this.i18n.tList('endRules'));
+
+    document.getElementById('goalKey').textContent = t('goalKey');
+    document.getElementById('endKey').textContent = t('endKey');
+    document.getElementById('modeGoal').textContent = t(goalKey);
+    document.getElementById('modeEnd').textContent = t(endKey);
+
+    // While the player is still choosing a difficulty, mirror the selected
+    // mode's numbers into the HUD so the two never contradict each other.
+    if (this.state === GameState.START) this.updateHUDSummary();
 
     const soundBtn = document.getElementById('soundBtn');
     if (soundBtn) soundBtn.classList.toggle('off', !this.sound.enabled);

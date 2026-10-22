@@ -353,6 +353,40 @@ pressed on an item and held still, so the wave landed at a stale coordinate.
 It now tracks the item with the pointer during the charge, mirroring how a
 player actually aims.
 
+### Bug Fix Log (2026-10-22, round 3)
+
+A UI/clarity round driven by a pre-demo review: the game is judged from the
+public GitHub Pages link, so the first impression had to carry the rules.
+
+| # | Bug | Effect | Fix |
+|---|-----|--------|-----|
+| 9 | Press Start 2P is drawn on an **8px grid**, but nearly every font size was a non-multiple of 8 (22/13/11/9/8/7/6/5px) | Glyphs were resampled and looked mushy - users read it as "small and blurry" | The whole type scale was rebuilt on 8/10/12/16/24/32px |
+| 10 | `h1` used `text-shadow: 0 0 14px var(--cyan)` | A 14px glow radius on a 22px glyph bled into the letterforms; the title looked blurry up close | Replaced with a hard offset shadow `0 4px 0 #0a6b66` |
+| 11 | The HUD stretched across the full 1440px viewport while the canvas column was ~630px | The HUD looked thin and detached from the game on desktop | `#hud` constrained to `max-width: 1180px; margin: 0 auto`, plus a `min-width: 1000px` breakpoint that scales the HUD and overlay type up |
+| 12 | `updateUI()` bound the end-screen stat labels but **never the six HUD labels** | Switching to 中文 left SCORE / WALLET / TIME in English on the HUD | The HUD label elements are now bound to the same `t()` calls |
+| 13 | `SHOPPING CART`, the `N`/`W` category markers and the `X` lock marker were hard-coded English strings inside the canvas renderer | The play field stayed English after a language switch | Added `shoppingCart` / `markNeeds` / `markWants` / `lockMark` to all three dictionaries and routed them through `i18n.t()` |
+| 14 | MEDIUM and HARD had a **single one-line description** and never stated how a round ends | EASY is self-evident, but a judge could not tell that MEDIUM/HARD also end on bankruptcy - the core question raised in the review | Added a per-difficulty **rules card** (concrete rules + the two end conditions), a persistent **goal/end strip** under the HUD, and an **end reason** line on the end screen |
+| 15 | The HUD kept showing the EASY numbers ($100 / 30s) on the start screen even with HARD selected | The HUD contradicted the rules card directly below it | `updateHUDSummary()` mirrors the selected difficulty's numbers while in the START state |
+| 16 | The budget-goal bar used the shared `.full` class, which is **red** | In HARD the goal is met at spawn ($200 wallet vs a $150 goal), so the bar started full-and-red - it read as a warning when it actually meant success | `setBar()` takes a `fullIsGood` flag; the goal bar uses a green `.goalMet` style |
+| 17 | `goalReached` existed in all three dictionaries but was **never fired** | The player was never told when the HARD budget goal was met or broken | The goal in HARD is met on frame one, so the meaningful beat is the balance *falling below* $150 - a new `goalBroken` event now announces that |
+
+The drag-to-aim technique was measured in round 2 (13% hit rate when holding
+still, 100% when tracking the item) but was **not surfaced anywhere in the
+game**. The start screen instruction line and the README now state it
+explicitly: *hold to charge, drag onto the item, release to fire*.
+
+### Verification (round 3)
+
+- `tools/e2e.js` - **56/56** assertions passing
+- `tools/rules-check.js` - **39/39** new assertions covering the rules layer:
+  every difficulty states both end conditions, MEDIUM/HARD name their real
+  numbers (the $80/$120 and $100/$150 caps, the +15%/-10% adjustments, the
+  $150 goal, the 5s bargain expiry, the 2s time penalty), all three languages
+  render the same rules, the goal bar uses the success style, and the end
+  screen states why the round ended
+- `tools/soak.js` - full EASY/MEDIUM/HARD rounds, zero console errors
+- `tools/limits.js`, `tools/mechanics.js` - passing
+
 ### Spec reconciliation
 
 `requirements.md` 6.7/6.8 specify MEDIUM $200 / HARD $150, but that makes the

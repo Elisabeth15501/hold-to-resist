@@ -19,6 +19,18 @@ Open `index.html` in a browser. That's it.
 | **MEDIUM** | $150 | 30s | NEEDS / WANTS categories, per-category spending limits, end-of-round budget bonus & overspend penalty |
 | **HARD** | $200 | 45s | Budget goal ($150 kept), bargain items that expire, urgency levels, time penalties for missed items |
 
+### How a round ends (every tier)
+
+Two and only two ways a round ends, stated on the start screen and in a
+persistent strip under the HUD:
+
+- **Wallet reaches $0** → bankrupt, the round ends immediately (GAME OVER)
+- **Timer reaches 0** → the round ends and you survived (YOU RESISTED!)
+
+The start screen carries a per-difficulty **rules card** listing that mode's
+concrete numbers (caps, bonuses, penalties) plus the two end conditions, and
+the end screen states *which* of the two happened.
+
 ## Controls
 
 - **Mouse / touch**: press and hold to charge, release to fire the wave
@@ -52,6 +64,7 @@ hold-to-resist/
 ├── index.html                  # the entire game
 ├── tools/                      # Playwright test harness (dev only)
 │   ├── e2e.js                  # 56-assertion end-to-end suite
+│   ├── rules-check.js          # difficulty-rules / end-condition assertions
 │   ├── soak.js                 # full-round playthroughs
 │   ├── limits.js               # category spending-limit checks
 │   └── mechanics.js            # bargain/urgency/scoring/sound checks
@@ -74,6 +87,13 @@ It covers boot, the START → PLAYING → END → replay state machine, item
 spawning, interception scoring, wallet depletion, bankruptcy, all three
 difficulty tiers, all three languages, `localStorage` persistence, and the
 mobile viewport with touch input.
+
+`rules-check.js` is the separate suite for the rules layer: it asserts that
+every difficulty states both end conditions, that MEDIUM/HARD name their
+actual numbers (the $80/$120 and $100/$150 caps, the +15%/-10% adjustments,
+the $150 goal, the 5s bargain expiry and the 2s time penalty), that all three
+languages render the same rules, and that the end screen states why the round
+ended.
 
 ## Spec reconciliation
 
