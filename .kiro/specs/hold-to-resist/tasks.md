@@ -328,6 +328,31 @@ Additional fixes made during verification:
 - The HARD budget goal measured "money saved", which made it trivial; it now
   measures the **remaining wallet** against the goal.
 
+### Bug Fix Log (2026-10-22, round 2)
+
+A second round of measurement-driven fixes, found by instrumenting the running
+game rather than by reading the code:
+
+| # | Bug | Effect | Fix |
+|---|-----|--------|-----|
+| 7 | The `InputHandler` never listened for `mousemove`/`touchmove`, so `lastInputX/Y` stayed locked to the mousedown position | The interception wave always spawned at the *press* point. A wave expanding downward can never overtake a falling item (it is permanently chasing from above), so "hold the mouse over the item and release" missed roughly 80% of the time | The pointer is now tracked while charging, and the wave fires at the release position. The pointer is clamped to the canvas so a drag that leaves the canvas still produces an on-screen wave |
+| 8 | `canvas.addEventListener('mouseleave', ...)` force-released the charge | Releasing the charge the moment the pointer left the canvas broke the drag-to-aim gesture | The listener was removed; `mouseup` on `window` already covers release |
+
+Measured impact of fix 7 (12 attempts per strategy, real mouse input):
+
+| Strategy | Hit rate before | Hit rate after |
+|----------|-----------------|----------------|
+| Press and hold still, aim at the item | 13% | 13% (unchanged - the wave is stranded above the item) |
+| Press and **drag to track** the item | n/a (impossible) | **100%** |
+| Aim below the item (wave grows upward into it) | 100% | 100% |
+
+The drag-to-aim path is now the intended way to play and it is reliable.
+
+The interception test in `tools/e2e.js` was flaky for the same root cause: it
+pressed on an item and held still, so the wave landed at a stale coordinate.
+It now tracks the item with the pointer during the charge, mirroring how a
+player actually aims.
+
 ### Spec reconciliation
 
 `requirements.md` 6.7/6.8 specify MEDIUM $200 / HARD $150, but that makes the
@@ -344,3 +369,12 @@ scoring, wallet depletion, bankruptcy, all three difficulties, all three
 languages, localStorage persistence, and mobile viewport/touch layout.
 Full-round soak tests (`tools/soak.js`) play complete EASY/MEDIUM/HARD rounds
 with zero console errors.
+
+The suite is run with:
+
+```
+PW_MODULE=<path-to>/node_modules/playwright node tools/e2e.js
+```
+
+It was run four consecutive times after the round-2 fixes with **56/56 passing
+every time** (the interception assertions were previously flaky).

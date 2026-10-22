@@ -1,0 +1,4 @@
+# The game ships as a single self-contained index.html. Pin its encoding and
+# line endings so a Windows checkout cannot rewrite the deployed file as
+# CRLF/UTF-16 and break the byte-for-byte single-file delivery.
+index.html text eol=lf working-tree-encoding=UTF-8

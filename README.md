@@ -23,6 +23,9 @@ Open `index.html` in a browser. That's it.
 
 - **Mouse / touch**: press and hold to charge, release to fire the wave
 - Longer hold = wider wave (3 tiers)
+- **Keep the pointer on the falling item while you charge.** The wave is fired
+  where you release, so dragging to track the item is what makes a clean
+  interception. Holding still leaves the wave stranded above the target.
 - Click the **EN / 简 / 繁** buttons to switch language
 - Click **♪** to toggle sound
 

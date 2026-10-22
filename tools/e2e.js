@@ -39,6 +39,47 @@ const state = (page) => page.evaluate(() => ({
   goal: window.game.difficultyManager.getConfig().budgetGoal,
 }));
 
+// Find a live item and return its on-screen (client) coordinates.
+// Picks the newest (highest) item: it is still accelerating, so it is the
+// slowest and easiest to intercept.
+const findTarget = (page) => page.evaluate(() => {
+  const g = window.game;
+  if (g.state !== 'PLAYING') return null;
+  const cands = g.items.filter(it => !it.isIntercepted && it.y > 20 && it.y < 520);
+  if (!cands.length) return null;
+  const item = cands.reduce((a, b) => (a.y <= b.y ? a : b));
+  const r = document.getElementById('gameCanvas').getBoundingClientRect();
+  return {
+    x: r.left + (item.x / 480) * r.width,
+    y: r.top + (item.y / 640) * r.height,
+  };
+});
+
+/**
+ * Charge and release a wave at a live item.
+ *
+ * The realistic human path is to press down, DRAG the pointer along with the
+ * falling item while charging, then release. The pointer is tracked during
+ * the charge, so releasing fires the wave at the item's current position.
+ * Aiming once on mousedown and holding still leaves the wave stranded above
+ * the item and the hit becomes a coin flip.
+ */
+async function interceptOnce(page, chargeMs = 320) {
+  const target = await findTarget(page);
+  if (!target) return false;
+  await page.mouse.move(target.x, target.y);
+  await page.mouse.down();
+  // Track the item with the pointer while charging.
+  const t0 = Date.now();
+  while (Date.now() - t0 < chargeMs) {
+    const t = await findTarget(page);
+    if (t) await page.mouse.move(t.x, t.y);
+    await page.waitForTimeout(30);
+  }
+  await page.mouse.up();
+  return true;
+}
+
 (async () => {
   const browser = await chromium.launch({
     executablePath: EXEC,
@@ -90,21 +131,8 @@ const state = (page) => page.evaluate(() => ({
 
     const before = await state(page);
     // Aim each wave at a live item so the test is deterministic.
-    const box = await page.locator('#gameCanvas').boundingBox();
     for (let i = 0; i < 16; i++) {
-      const target = await page.evaluate(() => {
-        const g = window.game;
-        const item = g.items.find(it => !it.isIntercepted && it.y > 0 && it.y < 520);
-        if (!item) return null;
-        const r = document.getElementById('gameCanvas').getBoundingClientRect();
-        return { x: r.left + (item.x / 480) * r.width, y: r.top + (item.y / 640) * r.height };
-      });
-      if (target) {
-        await page.mouse.move(target.x, target.y);
-        await page.mouse.down();
-        await page.waitForTimeout(320);
-        await page.mouse.up();
-      }
+      await interceptOnce(page);
       await page.waitForTimeout(120);
     }
     const after = await state(page);
@@ -138,19 +166,7 @@ const state = (page) => page.evaluate(() => ({
     await page.waitForTimeout(5200);
     // Play for real first: intercept a few items so the end screen has data.
     for (let i = 0; i < 10; i++) {
-      const target = await page.evaluate(() => {
-        const g = window.game;
-        if (g.state !== 'PLAYING') return null;
-        const item = g.items.find(it => !it.isIntercepted && it.y > 0 && it.y < 520);
-        if (!item) return null;
-        const r = document.getElementById('gameCanvas').getBoundingClientRect();
-        return { x: r.left + (item.x / 480) * r.width, y: r.top + (item.y / 640) * r.height };
-      });
-      if (!target) { await page.waitForTimeout(150); continue; }
-      await page.mouse.move(target.x, target.y);
-      await page.mouse.down();
-      await page.waitForTimeout(320);
-      await page.mouse.up();
+      await interceptOnce(page);
       await page.waitForTimeout(120);
     }
     // Then force the end condition deterministically.
