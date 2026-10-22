@@ -6,46 +6,46 @@
 
 ## Tasks
 
-- [ ] 1. Set up project structure and core interfaces
+- [x] 1. Set up project structure and core interfaces
   - Create the single HTML file structure with canvas element
   - Define TypeScript interfaces for all game entities (Game, Item, Charge, etc.)
   - Set up the GameConfig interface with all constants
   - _Requirements: 1.1-1.7, 10.1-10.6_
 
-- [ ] 2. Implement core game systems
-  - [ ] 2.1 Implement GameState enum and state management
+- [x] 2. Implement core game systems
+  - [x] 2.1 Implement GameState enum and state management
     - Create GameState enum (START, PLAYING, END)
     - Implement transitionState function
     - _Requirements: 1.1-1.7_
   
-  - [ ] 2.2 Implement Timer system
+  - [x] 2.2 Implement Timer system
     - Create Timer class with update method
     - Initialize to 30 seconds and count down
     - _Requirements: 7.1-7.4_
   
-  - [ ] 2.3 Implement Scorer system
+  - [x] 2.3 Implement Scorer system
     - Create Scorer class with addPoints and reset methods
     - Track score and money saved
     - _Requirements: 5.1-5.4_
 
-  - [ ] 2.4 Implement Wallet system
+  - [x] 2.4 Implement Wallet system
     - Create WalletManager class with init, deduct, addMoneySaved methods
     - Track wallet balance, spent, and saved money
     - Implement bankrupt check (balance <= $0)
     - _Requirements: 6.1-6.7_
   
-  - [ ] 2.5 Implement DifficultyManager
+  - [x] 2.5 Implement DifficultyManager
     - Create DifficultyManager class with init and getSpawnInterval methods
     - Configure difficulty tiers (EASY, MEDIUM, HARD)
     - Implement difficulty ramp (spawn interval decreases over time)
     - _Requirements: 12.1-12.6, 13.1-13.3_
   
-  - [ ] 2.6 Implement HighScoreManager
+  - [x] 2.6 Implement HighScoreManager
     - Load and save high scores to localStorage
     - Compare and save new high scores
     - _Requirements: 14.1-14.4_
 
-  - [ ] 2.7 Implement Language/Internationalization (i18n) System
+  - [x] 2.7 Implement Language/Internationalization (i18n) System
     - [ ] 2.7.1 Create I18nManager class with init, setLanguage, t methods
       - Implement language detection from localStorage
       - Default to English if no preference saved
@@ -63,209 +63,209 @@
       - Connect end screen text to translation system
       - _Requirements: 15.1, 15.6_
 
-- [ ] 3. Implement Input and Charge system
-  - [ ] 3.1 Implement InputHandler class
+- [x] 3. Implement Input and Charge system
+  - [x] 3.1 Implement InputHandler class
     - Setup mouse and touch event listeners
     - Handle mousedown/mouseup and touchstart/touchend
     - Track input position and state
     - _Requirements: 2.1-2.6_
   
-  - [ ] 3.2 Implement Charge system
+  - [x] 3.2 Implement Charge system
     - Create Charge class with start, release, update methods
     - Implement charge level tracking (0.0 to 1.0)
     - Trigger interception wave on release
     - _Requirements: 2.1-2.6, 9.1_
   
-  - [ ] 3.3 Write property test for Charge system
+  - [x] 3.3 Write property test for Charge system
     - **Property 10: Charge Bar Reflects Charge Level**
     - **Validates: Requirements 9.1**
     - Test charge level bounds (0.0 to 1.0)
     - Test visual scaling and color transitions
 
-- [ ] 4. Implement Falling Items system
-  - [ ] 4.1 Create temptation items data
+- [x] 4. Implement Falling Items system
+  - [x] 4.1 Create temptation items data
     - Define temptationItems array with emoji, pointValue, moneyValue, radius
     - Include items: 🧋, 🏷️, 🔗, 🛍️, 💎, 📱, 👗, 🎮
     - _Requirements: 3.1-3.7_
   
-  - [ ] 4.2 Implement Item class
+  - [x] 4.2 Implement Item class
     - Create Item interface with all required properties
     - Implement hitbox calculation
     - _Requirements: 3.1-3.7_
   
-  - [ ] 4.3 Implement ItemSpawner class
+  - [x] 4.3 Implement ItemSpawner class
     - Create spawnItem method with random X position
     - Implement difficulty scaling (spawn interval decreases over time)
     - _Requirements: 3.1-3.7, 12.1-12.6_
   
-  - [ ] 4.4 Write property test for Item Spawner
+  - [x] 4.4 Write property test for Item Spawner
     - **Property 3: Item Spawner Creates Valid Items**
     - **Validates: Requirements 3.1-3.7**
     - Test item creation with valid emojis and positions
 
-- [ ] 5. Implement Interception Mechanics
-  - [ ] 5.1 Implement InterceptionWave class
+- [x] 5. Implement Interception Mechanics
+  - [x] 5.1 Implement InterceptionWave class
     - Create trigger, update, checkCollisions methods
     - Implement wave radius expansion based on charge level
     - _Requirements: 4.1-4.6_
   
-  - [ ] 5.2 Implement collision detection
+  - [x] 5.2 Implement collision detection
     - Circle-to-circle collision between wave and items
     - Calculate interception quality (distance from center)
     - _Requirements: 4.1-4.6, 5.1-5.4_
   
-  - [ ] 5.3 Implement bounce physics
+  - [x] 5.3 Implement bounce physics
     - Bounce items upward with velocity based on charge
     - Add slight horizontal spread based on position
     - _Requirements: 4.3, 10.3-10.4_
   
-  - [ ] 5.4 Write property test for Interception Wave
+  - [x] 5.4 Write property test for Interception Wave
     - **Property 5: Interception Wave Bounces Items**
     - **Validates: Requirements 4.1-4.6**
     - Test item interception and bounce physics
 
-- [ ] 6. Implement Game Loop and Core Game Class
-  - [ ] 6.1 Implement main Game class
+- [x] 6. Implement Game Loop and Core Game Class
+  - [x] 6.1 Implement main Game class
     - Wire together all systems (Timer, Scorer, WalletManager, DifficultyManager, etc.)
     - Implement update and render methods
     - _Requirements: 1.1-1.7, 6.1-6.7_
   
-  - [ ] 6.2 Implement game loop
+  - [x] 6.2 Implement game loop
     - Set up requestAnimationFrame loop
     - Separate update and render phases
     - Target 60 FPS
     - _Requirements: 9.6_
   
-  - [ ] 6.3 Implement game state handlers
+  - [x] 6.3 Implement game state handlers
     - START state: display start screen
     - PLAYING state: process input and update game
     - END state: display end screen and save high score
     - _Requirements: 1.1-1.7, 8.1-8.9_
   
-  - [ ] 6.4 Write property test for Game State Transitions
+  - [x] 6.4 Write property test for Game State Transitions
     - **Property 1: Game State Transitions**
     - **Validates: Requirements 1.1-1.7**
     - Test valid state transitions
 
-- [ ] 7. Implement Rendering System
-  - [ ] 7.1 Implement Canvas rendering for items
+- [x] 7. Implement Rendering System
+  - [x] 7.1 Implement Canvas rendering for items
     - Draw emoji items on canvas
     - Handle text alignment and baseline
     - _Requirements: 3.5, 9.1_
   
-  - [ ] 7.2 Implement Interception Wave rendering
+  - [x] 7.2 Implement Interception Wave rendering
     - Draw expanding ring with fading opacity
     - Use canvas arc and stroke styles
     - _Requirements: 9.2_
   
-  - [ ] 7.3 Implement Charge Bar rendering
+  - [x] 7.3 Implement Charge Bar rendering
     - Draw charge bar at bottom of screen
     - Scale width based on charge level
     - Color gradient from green to red
     - _Requirements: 9.1_
   
-  - [ ] 7.4 Implement Game Over screen rendering
+  - [x] 7.4 Implement Game Over screen rendering
     - Draw end screen with stats
     - Display final score, money spent/saved, wallet balance
     - _Requirements: 8.6-8.11_
 
-- [ ] 8. Implement UI Screens
-  - [ ] 8.1 Implement Start Screen
+- [x] 8. Implement UI Screens
+  - [x] 8.1 Implement Start Screen
     - Display title "Hold To Resist" (按住别买)
     - Add "Start Game" button
     - Display difficulty selection menu (EASY, MEDIUM, HARD)
     - Display high score
     - _Requirements: 8.1-8.3_
   
-  - [ ] 8.2 Implement HUD (Playing Screen)
+  - [x] 8.2 Implement HUD (Playing Screen)
     - Display score, wallet balance, spent/saved counters, timer
     - Display category spending (NEEDS/WANTS) for MEDIUM/HARD
     - Update in real-time during gameplay
     - _Requirements: 8.3-8.7_
   
-  - [ ] 8.3 Implement End Screen
+  - [x] 8.3 Implement End Screen
     - Display final score, money spent, money saved, wallet balance
     - Display category breakdown (NEEDS/WANTS) for MEDIUM/HARD
     - Add "Play Again" button
     - _Requirements: 8.7-8.11, 14.1-14.4_
 
-- [ ] 9. Implement Visual Feedback and Effects
-  - [ ] 9.1 Implement wallet low balance effect
+- [x] 9. Implement Visual Feedback and Effects
+  - [x] 9.1 Implement wallet low balance effect
     - Flash screen red when wallet is below $20
     - Use CSS animations or canvas overlay
     - _Requirements: 9.5_
   
-  - [ ] 9.2 Implement item bounce animation
+  - [x] 9.2 Implement item bounce animation
     - Animate item reversing direction after interception
     - _Requirements: 9.3_
   
-  - [ ] 9.3 Write property test for Physics Simulation
+  - [x] 9.3 Write property test for Physics Simulation
     - **Property 11: Physics Simulation is Consistent**
     - **Validates: Requirements 10.1-10.6**
     - Test gravity, terminal velocity, and bounce consistency
 
-- [ ] 10. Implement Responsive Design
-  - [ ] 10.1 Implement screen resizing
+- [x] 10. Implement Responsive Design
+  - [x] 10.1 Implement screen resizing
     - Detect mobile vs desktop (600px threshold)
     - Adjust canvas size based on screen dimensions
     - Maintain aspect ratio
     - _Requirements: 11.1-11.6_
   
-  - [ ] 10.2 Implement touch zone configuration
+  - [x] 10.2 Implement touch zone configuration
     - Set touch zone to 70% of screen width on mobile
     - Allow full screen on desktop
     - _Requirements: 11.5-11.6_
   
-  - [ ] 10.3 Write property test for Responsive Design
+  - [x] 10.3 Write property test for Responsive Design
     - **Property 12: Responsive Design Works on All Screens**
     - **Validates: Requirements 11.1-11.6**
     - Test mobile detection and touch zone calculation
 
-- [ ] 11. Implement Difficulty Scaling
-  - [ ] 11.1 Implement difficulty ramp
+- [x] 11. Implement Difficulty Scaling
+  - [x] 11.1 Implement difficulty ramp
     - Decrease spawn interval by 50ms every 5 seconds
     - Cap minimum interval at 500ms
     - Linear interpolation between initial and min intervals
     - _Requirements: 12.2-12.3_
   
-  - [ ] 11.2 Update ItemSpawner with difficulty
+  - [x] 11.2 Update ItemSpawner with difficulty
     - Pass current difficulty to spawnInterval calculation
     - Update difficulty in game loop
     - _Requirements: 12.1-12.6_
   
-  - [ ] 11.3 Write property test for Difficulty Progression
+  - [x] 11.3 Write property test for Difficulty Progression
     - **Property 13: Difficulty Progresses Correctly**
     - **Validates: Requirements 12.1-12.6**
     - Test spawn interval calculations at various times
 
-- [ ] 12. Testing and Integration
-  - [ ] 12.1 Write integration tests for complete game flow
+- [x] 12. Testing and Integration
+  - [x] 12.1 Write integration tests for complete game flow
     - Test full game from start to end with all difficulty tiers
     - Verify wallet system correctly deducts money
     - Verify difficulty tiers work correctly
     - _Requirements: 1.1-1.7, 2.1-2.6, 3.1-3.7, 4.1-4.6, 5.1-5.4, 6.1-6.7, 7.1-7.7, 8.1-8.11, 9.1-9.6, 10.1-10.6, 11.1-11.6, 12.1-12.6, 14.1-14.4_
   
-  - [ ] 12.2 Test edge cases
+  - [x] 12.2 Test edge cases
     - Test boundary conditions (wallet = $0, timer = 0)
     - Test error handling (NaN values, division by zero)
     - _Requirements: 12.5-12.6_
   
-  - [ ] 12.3 Write property test for Scoring Accumulation
+  - [x] 12.3 Write property test for Scoring Accumulation
     - **Property 6: Scoring Accumulates Correctly**
     - **Validates: Requirements 5.1-5.4**
     - Test score calculations with varied items
 
-  - [ ] 12.4 Write property test for Timer Count Down
+  - [x] 12.4 Write property test for Timer Count Down
     - **Property 8: Timer Counts Down Correctly**
     - **Validates: Requirements 7.1-7.4**
     - Test timer decrement and game end transition
 
-  - [ ] 12.5 Write property test for UI Display
+  - [x] 12.5 Write property test for UI Display
     - **Property 9: UI Displays Correct Information**
     - **Validates: Requirements 8.1-8.9**
     - Test UI updates for all game states
 
-- [ ] 13. Final Checkpoint - Ensure all tests pass
+- [x] 13. Final Checkpoint - Ensure all tests pass
   - Run all unit tests and property tests
   - Verify all acceptance criteria are met
   - Ensure no console errors or warnings
@@ -296,3 +296,51 @@
   ]
 }
 ```
+
+---
+
+## Bug Fix Log (2026-10-22)
+
+The MVP generated by Kiro was structurally complete but **could not be played**:
+clicking "START GAME" left the player stuck on the start screen. Root causes,
+all confirmed with a headless-browser reproduction:
+
+| # | Bug | Effect | Fix |
+|---|-----|--------|-----|
+| 1 | `Charge` declared `isCharging` as both an instance property and a prototype method; the property shadowed the method | `this.charge.isCharging()` threw `TypeError` inside `render()`, killing the rAF loop on the first frame after start | Renamed the state flag to `charging`; `isCharging()` is now the only accessor |
+| 2 | `ItemSpawner.update()` called `spawnItem()` but discarded its return value, and never pushed into `game.items` | No temptation items ever existed | Spawner returns the item; the game pushes it into `items` |
+| 3 | `Date.now()` (epoch ms) was mixed with `requestAnimationFrame` timestamps (monotonic ms) | `deltaTime` was a huge negative number; the timer and physics were broken | Single time base: `performance.now()` everywhere |
+| 4 | `itemSpawner.nextSpawnTime` was seeded with `Date.now()` but compared against rAF time | Spawn condition never became true | Spawn timing is now driven by an accumulated `spawnTimerMs` delta |
+| 5 | `DifficultyManager.getSpawnInterval()` used the absolute clock as "elapsed time" and inverted the ramp | Spawn rate never increased; MEDIUM spawned *slower* over time | Ramp is computed from `elapsedMs` against the level duration |
+| 6 | The file was saved as **UTF-16 LE with BOM** | Editors and tooling treated `index.html` as a binary file | Re-saved as UTF-8 |
+
+Additional fixes made during verification:
+
+- `[hidden] { display: none !important }` - `.hud-item { display: flex }` was
+  overriding the `hidden` attribute, so MEDIUM/HARD HUD panels were visible in EASY.
+- `endGame()` set the end title *before* `updateUI()` overwrote it, so a
+  survival always reported "GAME OVER". The outcome is now stored in
+  `endReason` and restored by `updateUI()`.
+- The "GO!" countdown label was never removed from the DOM and stayed on screen.
+- The language/sound buttons were `position: fixed` over the HUD and overlapped
+  the goal panel; they are now part of the HUD flex row.
+- HARD bargain items now only expire on HARD (they kept the expiry ring in EASY).
+- The HARD budget goal measured "money saved", which made it trivial; it now
+  measures the **remaining wallet** against the goal.
+
+### Spec reconciliation
+
+`requirements.md` 6.7/6.8 specify MEDIUM $200 / HARD $150, but that makes the
+HARD goal of "save $150" unreachable on a $150 wallet. `design.md` and the
+project handoff both specify MEDIUM $150 / HARD $200, which is self-consistent.
+The implementation follows **design.md**: EASY $100/30s, MEDIUM $150/30s,
+HARD $200/45s with a $150 savings goal.
+
+### Verification
+
+Automated Playwright suite (`tools/e2e.js`, 56 assertions) covering: boot,
+START -> PLAYING -> END -> replay transitions, item spawning, interception
+scoring, wallet depletion, bankruptcy, all three difficulties, all three
+languages, localStorage persistence, and mobile viewport/touch layout.
+Full-round soak tests (`tools/soak.js`) play complete EASY/MEDIUM/HARD rounds
+with zero console errors.
