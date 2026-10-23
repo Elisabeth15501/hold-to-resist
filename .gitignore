@@ -1,6 +1,7 @@
-.DS_Store
-Thumbs.db
-*.log
-
 # Screenshots produced by the Playwright harness (see tools/paths.js outDir()).
 shots/
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+*.swp
