@@ -67,12 +67,18 @@ dependencies. All game logic, rendering, i18n, audio and persistence live in
 hold-to-resist/
 ├── index.html                  # the entire game
 ├── tools/                      # Playwright test harness (dev only)
+│   ├── paths.js                # shared path resolution (no hard-coded paths)
 │   ├── e2e.js                  # 56-assertion end-to-end suite
 │   ├── rules-check.js          # difficulty-rules / end-condition assertions
 │   ├── chrome-check.js         # menu chrome / HUD visibility assertions
 │   ├── soak.js                 # full-round playthroughs
 │   ├── limits.js               # category spending-limit checks
-│   └── mechanics.js            # bargain/urgency/scoring/sound checks
+│   ├── mechanics.js            # bargain/urgency/scoring/sound checks
+│   ├── touch-check.js          # mobile touch drag-aim check
+│   ├── verify-live.js          # deployment smoke test
+│   ├── verify-live-rules.js    # deployment rules check
+│   ├── verify-live-chrome.js   # deployment chrome check
+│   └── shots-ui.js             # desktop + mobile screenshots
 └── .kiro/specs/hold-to-resist/
     ├── requirements.md         # 15 requirements
     ├── design.md               # technical design
@@ -87,6 +93,10 @@ Playwright install and run:
 ```bash
 PW_MODULE=/path/to/node_modules/playwright node tools/e2e.js
 ```
+
+The harness resolves every path from its own location, so the repo runs on any
+machine. Set `CHROME_PATH` if Playwright's bundled Chromium is not the browser
+you want to drive, and `PW_OUT_DIR` to redirect the screenshots.
 
 It covers boot, the START → PLAYING → END → replay state machine, item
 spawning, interception scoring, wallet depletion, bankruptcy, all three

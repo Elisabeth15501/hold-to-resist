@@ -2,9 +2,10 @@
 // rules AND both end conditions, and the same text must survive a language
 // switch. Also checks the in-game objective strip and the end-screen reason.
 const { chromium } = require(process.env.PW_MODULE);
-const EXEC = 'C:/Users/elisa/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe';
-const TARGET = 'file:///C:/Users/elisa/dev/hold-to-resist/index.html';
-const OUT = 'C:/Users/elisa/WorkBuddy/hold-to-resist/shots';
+const { chromePath, outDir, TARGET, LIVE_URL } = require('./paths');
+const EXEC = chromePath();
+
+const OUT = outDir();
 
 let failures = 0;
 function check(name, ok, extra) {
@@ -13,7 +14,7 @@ function check(name, ok, extra) {
 }
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: EXEC, headless: true });
+  const browser = await chromium.launch(EXEC ? { executablePath: EXEC, headless: true } : { headless: true });
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 });
   page.on('pageerror', (e) => { failures++; console.log('FAIL  pageerror: ' + e.message); });
   await page.goto(TARGET, { waitUntil: 'load' });

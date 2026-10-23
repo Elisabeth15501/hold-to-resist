@@ -1,12 +1,13 @@
 // Verify bargain expiry, urgency, MEDIUM score bonus/penalty, time penalty, sound toggle.
 const { chromium } = require(process.env.PW_MODULE);
-const EXEC = 'C:/Users/elisa/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe';
+const { chromePath, outDir, TARGET, LIVE_URL } = require('./paths');
+const EXEC = chromePath();
 (async () => {
   const browser = await chromium.launch({ executablePath: EXEC, args: ['--allow-file-access-from-files'] });
   const page = await browser.newPage({ viewport: { width: 1180, height: 900 } });
   const errs = [];
   page.on('pageerror', e => errs.push(e.message));
-  await page.goto('file:///C:/Users/elisa/dev/hold-to-resist/index.html', { waitUntil: 'load' });
+  await page.goto(TARGET, { waitUntil: 'load' });
   await page.waitForTimeout(400);
 
   // ---- HARD bargain expiry (force a bargain template) ----

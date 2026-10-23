@@ -5,8 +5,9 @@
 const path = require('path');
 const { chromium } = require(process.env.PW_MODULE);
 
-const EXEC = 'C:/Users/elisa/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe';
-const TARGET = 'file:///C:/Users/elisa/dev/hold-to-resist/index.html';
+const { chromePath, outDir, TARGET, LIVE_URL } = require('./paths');
+const EXEC = chromePath();
+
 
 const results = [];
 function check(name, pass, detail) {

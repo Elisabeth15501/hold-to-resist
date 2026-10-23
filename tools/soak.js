@@ -1,6 +1,7 @@
 // Play full rounds to completion; report balance and check for leaks/errors.
 const { chromium } = require(process.env.PW_MODULE);
-const EXEC = 'C:/Users/elisa/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe';
+const { chromePath, outDir, TARGET, LIVE_URL } = require('./paths');
+const EXEC = chromePath();
 (async () => {
   const browser = await chromium.launch({ executablePath: EXEC, args: ['--allow-file-access-from-files'] });
   for (const diff of ['EASY', 'MEDIUM', 'HARD']) {
@@ -8,7 +9,7 @@ const EXEC = 'C:/Users/elisa/AppData/Local/ms-playwright/chromium-1234/chrome-wi
     const errs = [];
     page.on('pageerror', e => errs.push(e.message));
     page.on('console', m => { if (m.type() === 'error') errs.push('console: ' + m.text()); });
-    await page.goto('file:///C:/Users/elisa/dev/hold-to-resist/index.html', { waitUntil: 'load' });
+    await page.goto(TARGET, { waitUntil: 'load' });
     await page.waitForTimeout(300);
     await page.click(`[data-diff="${diff}"]`);
     await page.click('#startBtn');

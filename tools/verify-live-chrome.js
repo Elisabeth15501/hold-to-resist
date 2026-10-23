@@ -2,15 +2,16 @@
 // the language/sound cluster, the stat tiles must appear once the round
 // starts, and the title must clear the top bar.
 const { chromium } = require(process.env.PW_MODULE);
-const EXEC = 'C:/Users/elisa/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe';
-const URL = 'https://elisabeth15501.github.io/hold-to-resist/';
-const OUT = 'C:/Users/elisa/WorkBuddy/hold-to-resist/shots';
+const { chromePath, outDir, TARGET, LIVE_URL } = require('./paths');
+const EXEC = chromePath();
+const URL = LIVE_URL;
+const OUT = outDir();
 
 let fail = 0;
 function ok(c, m) { console.log((c ? 'ok    ' : 'FAIL  ') + m); if (!c) fail++; }
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: EXEC, headless: true });
+  const browser = await chromium.launch(EXEC ? { executablePath: EXEC, headless: true } : { headless: true });
 
   const d = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 });
   await d.goto(URL, { waitUntil: 'load' });

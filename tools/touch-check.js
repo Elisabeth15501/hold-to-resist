@@ -1,11 +1,12 @@
 // Verify the touch path: drag-to-aim must work with touch events too
 // (touchmove tracking was added alongside the mouse handling).
 const { chromium, devices } = require(process.env.PW_MODULE);
-const EXEC = 'C:/Users/elisa/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe';
-const TARGET = 'file:///C:/Users/elisa/dev/hold-to-resist/index.html';
+const { chromePath, outDir, TARGET, LIVE_URL } = require('./paths');
+const EXEC = chromePath();
+
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: EXEC, headless: true });
+  const browser = await chromium.launch(EXEC ? { executablePath: EXEC, headless: true } : { headless: true });
   const ctx = await browser.newContext({
     viewport: { width: 390, height: 844 },
     hasTouch: true, isMobile: true, deviceScaleFactor: 3,

@@ -4,11 +4,12 @@
 //   - drag-to-aim interception works against the live build
 //   - zero console errors, zero page errors, zero failed requests
 const { chromium } = require(process.env.PW_MODULE);
-const EXEC = 'C:/Users/elisa/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe';
-const TARGET = process.argv[2] || 'https://elisabeth15501.github.io/hold-to-resist/';
+const { chromePath, outDir, LIVE_URL } = require('./paths');
+const EXEC = chromePath();
+const TARGET = process.argv[2] || LIVE_URL;
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: EXEC, headless: true });
+  const browser = await chromium.launch(EXEC ? { executablePath: EXEC, headless: true } : { headless: true });
   const page = await browser.newPage({ viewport: { width: 1280, height: 860 } });
 
   const consoleErrors = [];

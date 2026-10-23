@@ -2,9 +2,10 @@
 // The stat HUD and the objective strip appear once the round starts, and the
 // title must never be covered by the top bar (desktop + mobile).
 const { chromium } = require(process.env.PW_MODULE);
-const EXEC = 'C:/Users/elisa/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe';
-const TARGET = 'file:///C:/Users/elisa/dev/hold-to-resist/index.html';
-const OUT = 'C:/Users/elisa/WorkBuddy/hold-to-resist/shots';
+const { chromePath, outDir, TARGET, LIVE_URL } = require('./paths');
+const EXEC = chromePath();
+
+const OUT = outDir();
 
 let pass = 0, fail = 0;
 function ok(cond, msg) {
@@ -13,7 +14,7 @@ function ok(cond, msg) {
 }
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: EXEC, headless: true });
+  const browser = await chromium.launch(EXEC ? { executablePath: EXEC, headless: true } : { headless: true });
 
   // ---------------- desktop ----------------
   const d = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 });
